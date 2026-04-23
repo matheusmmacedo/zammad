@@ -1,0 +1,31 @@
+name: Build .zpm packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/src/**'
+      - 'scripts/build-packages.sh'
+      - '.github/workflows/build-packages.yml'
+  pull_request:
+    paths:
+      - 'packages/src/**'
+      - 'scripts/build-packages.sh'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build packages
+        run: bash scripts/build-packages.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: zpm-packages
+          path: packages/build/*.zpm
+          if-no-files-found: ignore
+          retention-days: 30

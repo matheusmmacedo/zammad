@@ -1,0 +1,50 @@
+name: Check upstream zammad-docker-compose
+
+on:
+  schedule:
+    - cron: '0 7 * * 1'   # Monday 07:00 UTC
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare pinned tag with latest upstream
+        id: tags
+        run: |
+          CURRENT="$(tr -d '[:space:]' < UPSTREAM)"
+          LATEST="$(curl -sI https://github.com/zammad/zammad-docker-compose/releases/latest \
+            | awk -F/ 'tolower($1) ~ /^location:/ {print $NF}' | tr -d '\r')"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "latest=$LATEST"   >> "$GITHUB_OUTPUT"
+          if [ "$CURRENT" != "$LATEST" ]; then
+            echo "changed=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply upstream
+        if: steps.tags.outputs.changed == '1'
+        run: bash scripts/update-upstream.sh "${{ steps.tags.outputs.latest }}" --apply
+
+      - name: Open PR
+        if: steps.tags.outputs.changed == '1'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/upstream-${{ steps.tags.outputs.latest }}
+          base: main
+          title: "chore: bump zammad-docker-compose to ${{ steps.tags.outputs.latest }}"
+          body: |
+            Automated upstream bump.
+
+            | Current | Latest |
+            |---|---|
+            | `${{ steps.tags.outputs.current }}` | `${{ steps.tags.outputs.latest }}` |
+
+            Review `docker-compose.yml`, `scenarios/` and `rancher-compose.yml` carefully before merging.
+          commit-message: "chore: bump zammad-docker-compose to ${{ steps.tags.outputs.latest }}"

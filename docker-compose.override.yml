@@ -1,0 +1,13 @@
+---
+# KLaOS overlay
+#
+# Used for local dev (docker compose up). In production on Railway each
+# service is provisioned separately (see README / DEPLOY notes).
+#
+# Mounts built .zpm packages into /opt/zammad/auto_install/ so that
+# zammad-init installs them on startup.
+
+services:
+  zammad-init:
+    volumes:
+      - ./packages/build:/opt/zammad/auto_install:ro

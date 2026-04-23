@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zpm>
+  <name>klaos_branding</name>
+  <organization>matheusmmacedo</organization>
+  <version>0.0.1</version>
+  <description>
+    <item lang="en">KLaOS Helpdesk branding package (placeholder — logo, colors and CSS to follow).</item>
+    <item lang="pt-br">Pacote de branding do KLaOS Helpdesk (placeholder — logo, cores e CSS ainda a serem definidos).</item>
+  </description>
+  <url>https://github.com/matheusmmacedo/zammad</url>
+  <license>AGPLv3</license>
+  <author>Matheus Macedo</author>
+  <filelist>
+  </filelist>
+</zpm>
