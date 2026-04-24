@@ -1,0 +1,55 @@
+name: Build and publish image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/src/**'
+      - 'scripts/build-packages.sh'
+      - 'Dockerfile'
+      - '.github/workflows/docker.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build .zpm packages
+        run: bash scripts/build-packages.sh
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Zammad base version
+        id: ver
+        run: |
+          ver=$(grep '^ARG ZAMMAD_VERSION' Dockerfile | cut -d= -f2 | tr -d '[:space:]')
+          echo "zammad=$ver" >> "$GITHUB_OUTPUT"
+          echo "sha_short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/zammad-klaos:latest
+            ghcr.io/${{ github.repository_owner }}/zammad-klaos:${{ steps.ver.outputs.zammad }}-${{ steps.ver.outputs.sha_short }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
