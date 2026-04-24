@@ -1,0 +1,82 @@
+/*
+ * KLaOS Helpdesk — brand overrides
+ *
+ * Tokens extracted from klaos.ai (src/index.css, tailwind.config.js).
+ * Apply in Zammad Admin → Settings → Branding → Custom CSS (paste this whole file).
+ * The .zpm installer will eventually apply this automatically (task #10 follow-up).
+ */
+
+:root {
+  /* Primary (blue/violet) */
+  --kv-primary:        #514CF1;
+  --kv-primary-light:  #8A88F3;
+  --kv-primary-deep:   #2A2D35;
+  /* Accent (teal) */
+  --kv-accent:         #22F0C2;
+  /* Backgrounds */
+  --kv-bg:             #1b1c1d;
+  --kv-bg-secondary:   #1F2126;
+  --kv-surface-card:   #1F2126;
+  /* Text */
+  --kv-text:           #FFFFFF;
+  --kv-text-secondary: #8A88F3;
+  --kv-text-muted:     #EDEDED;
+  /* Borders */
+  --kv-border:         #36383C;
+
+  /* Gradients */
+  --kv-gradient-primary: linear-gradient(90deg, #514CF1, #8A88F3);
+  --kv-gradient-accent:  linear-gradient(90deg, #1F2126, #22F0C2);
+
+  /* Shadows / glow */
+  --kv-shadow-glow:        0 0 20px rgba(81, 76, 241, 0.4);
+  --kv-shadow-glow-accent: 0 0 15px rgba(34, 240, 194, 0.3);
+}
+
+/* Top navigation / app header */
+.main-navigation,
+#navigation .tasks {
+  background-color: var(--kv-bg-secondary) !important;
+  border-color: var(--kv-border) !important;
+}
+
+/* Primary buttons */
+.btn.btn--primary,
+.btn.btn--action {
+  background-color: var(--kv-primary) !important;
+  border-color: var(--kv-primary) !important;
+  color: var(--kv-text) !important;
+}
+
+.btn.btn--primary:hover,
+.btn.btn--action:hover {
+  background-color: var(--kv-primary-light) !important;
+  border-color: var(--kv-primary-light) !important;
+  box-shadow: var(--kv-shadow-glow);
+}
+
+/* Links / accents */
+a,
+.js-link,
+.text-primary {
+  color: var(--kv-accent) !important;
+}
+
+a:hover {
+  color: rgba(34, 240, 194, 0.8) !important;
+}
+
+/* Active tab / selection */
+.tabsSidebar-tab.is-active,
+.sidebar .item.active {
+  border-color: var(--kv-primary) !important;
+  color: var(--kv-primary-light) !important;
+}
+
+/* Form focus ring */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--kv-primary) !important;
+  box-shadow: 0 0 0 2px rgba(81, 76, 241, 0.25) !important;
+}

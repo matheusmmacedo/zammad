@@ -2,10 +2,10 @@
 <zpm>
   <name>klaos_branding</name>
   <organization>matheusmmacedo</organization>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
   <description>
-    <item lang="en">KLaOS Helpdesk branding package (placeholder — logo, colors and CSS to follow).</item>
-    <item lang="pt-br">Pacote de branding do KLaOS Helpdesk (placeholder — logo, cores e CSS ainda a serem definidos).</item>
+    <item lang="en">KLaOS Helpdesk branding — colors, logo and favicon matching the main KLaOS product identity (klaos.ai).</item>
+    <item lang="pt-br">Identidade visual do KLaOS Helpdesk — cores, logo e favicon alinhados ao produto principal (klaos.ai).</item>
   </description>
   <url>https://github.com/matheusmmacedo/zammad</url>
   <license>AGPLv3</license>
