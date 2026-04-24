@@ -76,6 +76,11 @@ for pkg_dir in "$SRC_DIR"/*/; do
       url: process.argv[6], license: process.argv[7], author: process.argv[8],
     };
 
+    // Files that are repo-only (docs, manifest) should not be packed into
+    // the .zpm — the manifest metadata is already in the JSON root, and
+    // README conflicts across packages since Zammad rejects duplicate files.
+    const EXCLUDE = /(^|\\/)(README\\.md|\\.szpm$|\\.gitkeep)/i;
+
     const paths = await walk(base);
     const files = paths
       .filter(p => p !== manifest)
@@ -83,7 +88,8 @@ for pkg_dir in "$SRC_DIR"/*/; do
         location: relative(base, p).split(/[\\\\/]/).join('/'),
         permission: '644',
         content: readFileSync(p).toString('base64'),
-      }));
+      }))
+      .filter(f => !EXCLUDE.test(f.location));
 
     const pkg = {
       name: meta.name, version: meta.version, vendor: meta.vendor,
