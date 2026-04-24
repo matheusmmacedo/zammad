@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zpm>
+  <name>klaos_translations</name>
+  <organization>matheusmmacedo</organization>
+  <version>0.1.0</version>
+  <description>
+    <item lang="en">PT-BR translation overrides for KLaOS Helpdesk (Zammad). SQL UPDATEs against the translations table.</item>
+    <item lang="pt-br">Sobreposições de tradução PT-BR para o KLaOS Helpdesk (Zammad). UPDATEs SQL na tabela translations.</item>
+  </description>
+  <url>https://github.com/matheusmmacedo/zammad</url>
+  <license>AGPLv3</license>
+  <author>Matheus Macedo</author>
+  <filelist>
+  </filelist>
+</zpm>
