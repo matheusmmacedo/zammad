@@ -127,16 +127,26 @@ value: helpdesk.klaos.ai
 
 JSON (`{"value":"..."}`) also parses and writes cleanly, which is what `scripts/apply-branding.mjs` uses. After any direct SQL update, **restart zammad-railsserver** to bust the memcached settings cache.
 
-### 9. Elasticsearch startup still crashes (deferred)
+### 9. Elasticsearch 8.x doesn't like the env-var-to-YAML path
 
-With quoted `"::"` set, ES got further but crashes with `fatal exception while booting Elasticsearch` and logs the rest to `/usr/share/elasticsearch/logs/zammad.log` — which Railway's log stream doesn't surface. Options to revisit:
+`elasticsearch:8.19.8` reads env vars, converts them into its `elasticsearch.yml`, and then its own YAML parser chokes on `network.host: ::` (the bare `::` is YAML mapping-value). Quoting didn't help in our tests; the actual stack trace lives in `/usr/share/elasticsearch/logs/zammad.log` which Railway's log stream doesn't surface.
 
-- Use `elasticsearch:7.17.x` (simpler bootstrap).
-- Build a custom image that writes the full config to `config/elasticsearch.yml` instead of relying on env-var-to-YAML conversion.
-- Use OpenSearch (Apache-2.0 fork) which tends to be more permissive.
-- Use Elastic Cloud's free tier and point `ELASTICSEARCH_HOST` at it.
+**What worked:** downgrade to `docker.elastic.co/elasticsearch/elasticsearch:7.17.25` with:
 
-Meanwhile: `ELASTICSEARCH_ENABLED=false` on the Zammad services + ES service set to sleep mode. Zammad runs fine without it, just no advanced search.
+```
+discovery.type=single-node
+xpack.security.enabled=false
+bootstrap.memory_lock=false
+cluster.name=zammad
+node.name=zammad-es-1
+network.host="::"
+http.host="::"
+ES_JAVA_OPTS=-Xms256m -Xmx256m
+```
+
+7.17 accepts the quoted `"::"` cleanly. **Don't set `network.host=0.0.0.0,::`** — ES refuses to bind a wildcard mixed with a specific family (`bind address: {0.0.0.0} is wildcard, but multiple addresses specified`). `::` alone is enough because dual-stack sockets accept IPv4-mapped connections.
+
+**Triggering the index rebuild on first connect:** set `ELASTICSEARCH_REINDEX=true` on `zammad-init`, redeploy, then remove the var so subsequent inits don't rebuild again.
 
 ---
 
