@@ -25,6 +25,11 @@ install_packages() {
       echo "     (already installed or failed — continuing)"
     fi
   done
+
+  # Install only copies files; migrations need a separate task. Run them so
+  # branding/translations actually apply to the live DB.
+  echo "klaos-init: running zammad:package:post_install …"
+  bundle exec rake zammad:package:post_install 2>&1 | sed 's/^/  /' || true
 }
 
 if [ "${1:-}" = "zammad-init" ]; then
