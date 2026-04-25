@@ -21,7 +21,7 @@ install_packages() {
     # Modern Zammad uses `rails zammad:package:install <path>` (positional
     # arg), not the older rake-bracket form. We treat "already installed"
     # as success so the wrapper is idempotent across restarts.
-    if ! bundle exec rails zammad:package:install "$zpm" 2>&1 | sed 's/^/     /'; then
+    if ! bundle exec rake zammad:package:install "$zpm" 2>&1 | sed 's/^/     /'; then
       echo "     (already installed or failed — continuing)"
     fi
   done
