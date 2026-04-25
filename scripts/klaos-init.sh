@@ -18,9 +18,10 @@ install_packages() {
   cd /opt/zammad || exit 1
   for zpm in "${zpms[@]}"; do
     echo "  >> $zpm"
-    # rake task is idempotent: it errors if the same version is installed,
-    # which we treat as success.
-    if ! bundle exec rake "zammad:package:install[$zpm]" 2>&1 | sed 's/^/     /'; then
+    # Modern Zammad uses `rails zammad:package:install <path>` (positional
+    # arg), not the older rake-bracket form. We treat "already installed"
+    # as success so the wrapper is idempotent across restarts.
+    if ! bundle exec rails zammad:package:install "$zpm" 2>&1 | sed 's/^/     /'; then
       echo "     (already installed or failed — continuing)"
     fi
   done
