@@ -28,8 +28,11 @@ install_packages() {
 
   # Install only copies files; migrations need a separate task. Run them so
   # branding/translations actually apply to the live DB.
-  echo "klaos-init: running zammad:package:post_install …"
-  bundle exec rake zammad:package:post_install 2>&1 | sed 's/^/  /' || true
+  # We deliberately skip post_install (which also runs assets:precompile)
+  # because our packages don't ship JS/CSS that needs precompilation, and
+  # precompile fails on the read-only image asset paths.
+  echo "klaos-init: running zammad:package:migrate …"
+  bundle exec rake zammad:package:migrate 2>&1 | sed 's/^/  /' || true
 }
 
 if [ "${1:-}" = "zammad-init" ]; then
